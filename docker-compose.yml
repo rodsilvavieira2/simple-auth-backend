@@ -1,0 +1,32 @@
+version: '3.7'
+
+services:
+  postgres:
+    image: postgres
+    container_name: pg-docker
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_PASSWORD=docker
+      - POSTGRES_USER=docker
+      - POSTGRES_DB=auth_api_dev
+  api:
+    image: node:14.17
+    container_name: api-docker
+    restart: always
+    working_dir: /usr/app
+    command: bash -c 'yarn && yarn dev'
+    environment: 
+      - LOCALE_ENV=docker
+    env_file:
+      - .env
+    ports:
+      - 8080:8080
+      - 9229:9229
+    volumes:
+      - .:/usr/app
+    links:
+      - postgres
+    depends_on:
+      - postgres
